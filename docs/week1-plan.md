@@ -38,18 +38,13 @@ See `class-assignments.md`. Twelve classes, two per member: `Customer`, `OrderSt
 | Task | Status |
 |---|---|
 | 1.01 Kaneo board and workflow | Done |
-| 1.02 Choose the project and register the team | In Review |
-| 1.03 Shared Git repository | In progress |
+| 1.02 Choose the project and register the team | Done |
+| 1.03 Shared Git repository | In review |
 | 1.04 Requirements list | In progress |
-| 1.05 CRC cards | Not started |
-| 1.06 Class assignments | Draft ready |
-| 1.07 Use-case and class diagrams | Not started |
+| 1.05 CRC cards | In progress |
+| 1.06 Class assignments | In progress |
+| 1.07 Use-case and class diagrams | In progress |
 
-## 6. Questions for the instructor
-1. Are the planned classes and their split acceptable?
-2. Is the Must/Should split of requirements correct?
-3. Is an HTML prototype of the screens allowed as an extra?
-
-## 7. Changes requested by the instructor
-*(fill in during the meeting, then add each one to Kaneo as a task)*
+## 6. Changes requested by the instructor
+*(fill in during the meeting,)*
 -
