@@ -44,7 +44,7 @@ See `class-assignments.md`. Twelve classes, two per member: `Customer`, `OrderSt
 | 1.05 CRC cards | In progress |
 | 1.06 Class assignments | In progress |
 | 1.07 Use-case and class diagrams | In progress |
-| 1.08 Get the plan Approved by the Instructor |
+| 1.08 Get the plan Approved by the Instructor | In progress |
 ## 6. Changes requested by the Instructor 
 *(fill in during the meeting,)*
 -
