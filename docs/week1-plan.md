@@ -42,7 +42,7 @@ See `class-assignments.md`. Twelve classes, two per member: `Customer`, `OrderSt
 | 1.03 Shared Git repository | In review |
 | 1.04 Requirements list | In progress |
 | 1.05 CRC cards | In progress |
-| 1.06 Class assignments | In progress |
+| 1.06 Class assignments | In review |
 | 1.07 Use-case and class diagrams | In progress |
 | 1.08 Get the plan Approved by the Instructor | In progress |
 ## 6. Changes requested by the Instructor 
