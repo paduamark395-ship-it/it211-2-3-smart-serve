@@ -11,7 +11,7 @@ Smart Serve is a Java application for fast-food and restaurant customers. It rem
 |---|---|
 | Mark Padua | Project Manager / QA |
 | Hazel Ann S. Gunao | Documentation |
-| Aizie Botalo | Backend Developer |
+| Aizie Botalon | Backend Developer |
 | Janna Adelhene Mejia | Lead Developer |
 | Amy Gerero | Frontend Developer |
 | Charly Datur | UI/UX Designer |
