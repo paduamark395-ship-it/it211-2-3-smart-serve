@@ -1,7 +1,7 @@
 # Smart Serve: Week 1 Plan (for instructor checkpoint)
 
 **Course:** IT211 – Section 2-3  
-**Prepared by:** Mark Padua, Project Manager
+**Prepared by:** Mark Padua, Project Manager | Hazel Ann S. Gunao, Documentation
 
 ## 1. Project summary
 Smart Serve is a Java application for fast-food and restaurant customers. It removes the need to line up: customers order from a digital menu, track their order live, and reserve or check available tables.
