@@ -2,7 +2,7 @@
 
 A Java application that makes the fast-food / restaurant experience easier: customers order from a digital menu without lining up, track their order, and reserve or check available tables.
 
-**Course:** IT211 – Section 2-3  
+**Course:** IT211 – Block 2-3 Group 1
 **Team:** Mark Padua (Project Manager / QA), Hazel Ann S. Gunao (Documentation), Aizie Botalon (Backend), Janna Adelhene Mejia (Lead Developer), Amy Gerero (Frontend), Charly Datur (UI/UX Designer)
 
 ## Features
