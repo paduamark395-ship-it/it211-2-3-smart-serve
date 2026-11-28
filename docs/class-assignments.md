@@ -4,7 +4,7 @@ Every member owns at least two classes and must be able to explain them.
 
 | Member | Role | Classes |
 |---|---|---|
-| Mark Padua | Project Manager / QA | `Customer`, `OrderStatus` |
+| Mark Padua | Project Manager / QA | `Customer`, `OrderStatus`, `DataStore`|
 | Hazel Ann S. Gunao | Documentation | `MenuCategory`, `MenuItem` |
 | Aizie Botalon | Backend Developer | `Order`, `OrderItem` |
 | Janna Adelhene Mejia | Lead Developer | `OrderManager`, `TableManager` |
