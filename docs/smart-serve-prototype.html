@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Serve</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#faf7f2;--card:#fff;--text:#1f1d1a;--muted:#6d675f;--accent:#d9480f;--accent-t:#fff;--line:#e6dfd4;--ok:#2b8a3e;--busy:#c92a2a;--warn:#e67700}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171513;--card:#232019;--text:#f3eee6;--muted:#a39b8f;--accent:#ff8c42;--accent-t:#171513;--line:#38342c;--ok:#69db7c;--busy:#ff8787;--warn:#ffc078;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#171513;--card:#232019;--text:#f3eee6;--muted:#a39b8f;--accent:#ff8c42;--accent-t:#171513;--line:#38342c;--ok:#69db7c;--busy:#ff8787;--warn:#ffc078;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4;padding-bottom:70px}
+header{padding:16px;text-align:center}
+header h1{margin:0;font-size:1.4rem}
+header p{margin:2px 0 0;color:var(--muted);font-size:.85rem}
+main{max-width:640px;margin:0 auto;padding:0 14px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;padding:12px 4px;border:0;background:none;color:var(--muted);font-size:.85rem;cursor:pointer}
+nav button.on{color:var(--accent);font-weight:700}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px}
+.chip{padding:6px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--accent);color:var(--accent-t);border-color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.muted{color:var(--muted);font-size:.85rem}
+.btn{background:var(--accent);color:var(--accent-t);border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer}
+.btn.alt{background:none;color:var(--accent);border:1px solid var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:1rem;cursor:pointer}
+.steps{display:flex;justify-content:space-between;margin:14px 0 6px}
+.step{flex:1;text-align:center;font-size:.75rem;color:var(--muted)}
+.dot{width:26px;height:26px;border-radius:50%;margin:0 auto 4px;background:var(--line);display:grid;place-items:center;font-size:.8rem}
+.step.done .dot{background:var(--ok);color:#fff}
+.step.now .dot{background:var(--warn);color:#fff}
+.step.now,.step.done{color:var(--text)}
+.tables{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tbl{border-radius:12px;padding:14px 6px;text-align:center;border:2px solid var(--ok);background:var(--card);cursor:pointer;color:var(--text)}
+.tbl.busy{border-color:var(--busy);cursor:default;opacity:.8}
+.tbl.mine{border-color:var(--accent);background:var(--accent);color:var(--accent-t)}
+.tbl b{display:block;font-size:1.1rem}
+.sec{font-weight:700;margin:16px 0 8px}
+.toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:8px;font-size:.85rem;display:none}
+</style>
+</head>
+<body>
+<header><h1>🍔 Smart Serve</h1><p>Order, track and reserve — no more waiting in line</p></header>
+<main id="app"></main>
+<nav id="nav"></nav>
+<div class="toast" id="toast"></div>
+<script>
+var MENU=[
+{id:1,n:"Classic Burger",c:"Burgers",p:120},{id:2,n:"Cheese Burger",c:"Burgers",p:140},
+{id:3,n:"Crispy Chicken",c:"Chicken",p:150},{id:4,n:"Chicken Tenders",c:"Chicken",p:130},
+{id:5,n:"Fries",c:"Sides",p:60},{id:6,n:"Onion Rings",c:"Sides",p:70},
+{id:7,n:"Iced Tea",c:"Drinks",p:50},{id:8,n:"Cola",c:"Drinks",p:45}];
+var STAT=["Received","Preparing","Ready","Completed"];
+var tab="menu",cat="All",cart={},orders=[],nextNo=101,myTable=null;
+var tables=[1,2,3,4,5,6].map(function(i){return{no:i,seats:i<=3?2:4,busy:i===2||i===5}});
+function peso(n){return"₱"+n}
+function toast(m){var t=document.getElementById("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},1800)}
+function total(){return MENU.reduce(function(s,m){return s+(cart[m.id]||0)*m.p},0)}
+function count(){return Object.keys(cart).reduce(function(s,k){return s+cart[k]},0)}
+function chg(id,d){var q=(cart[id]||0)+d;if(q<=0)delete cart[id];else cart[id]=q;render()}
+function place(){
+  if(!count()){return}
+  var items=MENU.filter(function(m){return cart[m.id]}).map(function(m){return{n:m.n,q:cart[m.id]}});
+  orders.unshift({no:nextNo++,items:items,sum:total(),s:0,table:myTable});
+  cart={};tab="orders";toast("Order placed!");render()
+}
+function advance(i){if(orders[i].s<3){orders[i].s++;render()}}
+function reserve(no){
+  var t=tables.filter(function(x){return x.no===no})[0];
+  if(t.busy)return;
+  myTable=(myTable===no)?null:no;
+  toast(myTable?"Table "+no+" reserved":"Reservation cancelled");render()
+}
+function menuView(){
+  var cats=["All"].concat(MENU.map(function(m){return m.c}).filter(function(c,i,a){return a.indexOf(c)===i}));
+  var h='<div class="cats">'+cats.map(function(c){return'<button class="chip'+(c===cat?' on':'')+'" onclick="cat=\''+c+'\';render()">'+c+'</button>'}).join("")+'</div>';
+  MENU.filter(function(m){return cat==="All"||m.c===cat}).forEach(function(m){
+    var q=cart[m.id]||0;
+    h+='<div class="card row"><div><b>'+m.n+'</b><div class="muted">'+m.c+' · '+peso(m.p)+'</div></div>'+
+    (q?'<div class="qty"><button onclick="chg('+m.id+',-1)">−</button><b>'+q+'</b><button onclick="chg('+m.id+',1)">+</button></div>':'<button class="btn" onclick="chg('+m.id+',1)">Add</button>')+'</div>'});
+  if(count())h+='<div class="card"><div class="row"><b>'+count()+' item(s)</b><b>'+peso(total())+'</b></div><div class="muted" style="margin:4px 0 10px">'+(myTable?'Serving to Table '+myTable:'No table selected — order for pickup')+'</div><button class="btn" style="width:100%" onclick="place()">Place order</button></div>';
+  return h
+}
+function ordersView(){
+  if(!orders.length)return'<div class="card muted">No orders yet. Pick something from the menu!</div>';
+  return orders.map(function(o,i){
+    var steps=STAT.map(function(s,j){return'<div class="step '+(j<o.s?'done':j===o.s?'now':'')+'"><div class="dot">'+(j<o.s?'✓':j+1)+'</div>'+s+'</div>'}).join("");
+    return'<div class="card"><div class="row"><b>Order #'+o.no+'</b><b>'+peso(o.sum)+'</b></div><div class="muted">'+
+    o.items.map(function(x){return x.q+'× '+x.n}).join(", ")+(o.table?' · Table '+o.table:' · Pickup')+'</div><div class="steps">'+steps+'</div>'+
+    '<div class="row"><span class="muted">'+(o.s===2?'Your order is ready!':o.s===3?'Enjoy your meal!':'We will update this live')+'</span>'+
+    '<button class="btn alt" '+(o.s===3?'disabled':'')+' onclick="advance('+i+')">Staff: next step</button></div></div>'}).join("")
+}
+function tablesView(){
+  var free=tables.filter(function(t){return!t.busy&&t.no!==myTable}).length;
+  var h='<div class="muted" style="margin-bottom:10px">'+free+' of '+tables.length+' tables available. Tap a free table to reserve it.</div><div class="tables">';
+  tables.forEach(function(t){
+    var cls=t.busy?'busy':t.no===myTable?'mine':'';
+    h+='<button class="tbl '+cls+'" onclick="reserve('+t.no+')"><b>Table '+t.no+'</b>'+t.seats+' seats<br><span style="font-size:.75rem">'+(t.busy?'Occupied':t.no===myTable?'Reserved by you':'Available')+'</span></button>'});
+  return h+'</div>'
+}
+function render(){
+  document.getElementById("app").innerHTML=tab==="menu"?menuView():tab==="orders"?ordersView():tablesView();
+  var tabs=[["menu","Menu"+(count()?" ("+count()+")":"")],["orders","My Orders"],["tables","Tables"]];
+  document.getElementById("nav").innerHTML=tabs.map(function(t){return'<button class="'+(t[0]===tab?'on':'')+'" onclick="tab=\''+t[0]+'\';render()">'+t[1]+'</button>'}).join("")
+}
+render();
+</script>
+</body>
+</html>
